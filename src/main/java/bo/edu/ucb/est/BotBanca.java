@@ -1,5 +1,6 @@
 package bo.edu.ucb.est;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -7,20 +8,32 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import bo.edu.ucb.est.utils.Mensaje;
+
 public class BotBanca extends TelegramLongPollingBot{
 
 	
 	private HashMap<Long,Usuario> usuarios;
-	private Mensaje m1;
-	
+
 	
 	public BotBanca()
 	{
 		usuarios= new HashMap<Long,Usuario>();
-		m1= new Mensaje();
-		agregarPrimerosMensajes();
 	}
-	
+	public Usuario verificarUsuario(Long id)
+	{
+		if(usuarios.containsKey(id))
+		{
+			System.out.println("Usuario encontrado");
+		}
+		else
+		{
+			usuarios.put(id, new Usuario());
+			System.out.println("Usuario agregado");
+		}
+		return usuarios.get(id);
+	}
+
 	
 	@Override
 	public void onUpdateReceived(Update update) {
@@ -31,33 +44,37 @@ public class BotBanca extends TelegramLongPollingBot{
 			 // Creo el objeto para enviar un mensaje
             SendMessage message = new SendMessage();
             //Define a quien le vamos a enviar el mensaje
-            message.setChatId(update.getMessage().getChatId().toString()); 
+            message.setChatId(update.getMessage().getChatId().toString());
+            //Obtiene el id del chat del usuario
+            Long userID=update.getMessage().getChatId();
             // Obtiene el mensaje del usuario
             String texto=update.getMessage().getText();
-            enviarMensaje(m1,message);
+       
+            Usuario user=verificarUsuario(userID);
+            sendMessage(message,user,texto);
+            
 		}
-	}
-	public void enviarMensaje(Mensaje m, SendMessage enviar)
-	{
-		for(String mensaje: m.getMensajes())
-		{
-			enviar.setText(mensaje);
-			try
-			{
-				execute(enviar);
-			}catch(TelegramApiException e)
-			{
-				e.printStackTrace();
-			}
-		}
-	}
-	public void agregarPrimerosMensajes()
-	{
-		m1.agregarMensaje("Bienvenido al Banco de los Dioses");
-		m1.agregarMensaje("He notado que aún no eres cliente, procedamos a registrarte.");
-		m1.agregarMensaje("¿Cúal es tu nombre completo?");
 	}
 	
+	public void sendMessage(SendMessage message, Usuario user,String texto)
+	{
+		 Answer answer= new Answer(user);
+		 Mensaje mensaje= answer.receiveAnswer(texto);
+		 int n= mensaje.getKey();
+		 
+		 for(int i=1;i<n;i++)
+		 {
+			 String m= mensaje.getMensajes().get(i);
+			 message.setText(m);
+			 try
+			 {
+				 execute(message);
+			 }catch(Exception e)
+			 {
+				 e.printStackTrace();
+			 }
+		 }
+	}
 	@Override
 	public String getBotUsername() {
 		// TODO Auto-generated method stub
