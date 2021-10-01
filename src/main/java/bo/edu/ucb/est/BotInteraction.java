@@ -211,7 +211,7 @@ public class BotInteraction {
 	}
 	public void defineRegisterName()
 	{
-		message.addMessage("Bienvenido al Banco de los Dioses");
+		message.addMessage("Bienvenido al Banco de la Fortuna");
 		message.addMessage("He notado que aún no eres cliente, procedamos a registrarte.");
 		message.addMessage("¿Cúal es tu nombre completo?","String");
 	}

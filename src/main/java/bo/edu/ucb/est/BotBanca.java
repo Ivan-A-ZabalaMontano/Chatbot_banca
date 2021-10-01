@@ -80,13 +80,13 @@ public class BotBanca extends TelegramLongPollingBot{
 	@Override
 	public String getBotUsername() {
 		// TODO Auto-generated method stub
-		return "ISUMA_BOT";
+		return "";
 	}
 
 	@Override
 	public String getBotToken() {
 		// TODO Auto-generated method stub
-		return "1970441371:AAGIEE7oMuWkKpjykhbhY_RobZs1SSIwFOI";
+		return "";
 	}
 
 }
