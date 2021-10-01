@@ -1,6 +1,6 @@
 package bo.edu.ucb.est;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
 import bo.edu.ucb.est.banca.Cuenta;
 import bo.edu.ucb.est.utils.Mensaje;
@@ -9,20 +9,20 @@ public class Usuario {
 	private String status;
 	private String nombre;
 	private String pin;
-	private int nroCuenta;
-	private HashMap<Integer,Cuenta> cuentas;
-	private String lastMSG;
-	private Mensaje mensaje;
+	private ArrayList<Cuenta> accounts;
+
+	private UserInteraction interaction;
+	
+	
 	public Usuario() 
 	{
 		this.status="Nuevo";
 		this.nombre="";
 		this.pin="";
-		lastMSG="";
-		
-		this.nroCuenta=0;
-		this.mensaje= new Mensaje();
+		this.accounts=new ArrayList<Cuenta>();
+		this.interaction= new UserInteraction();
 	}
+	//Getters
 	public String getStatus()
 	{
 		return this.status;
@@ -35,42 +35,15 @@ public class Usuario {
 	{
 		return this.pin;
 	}
-	public String getLastMSG()
+	public ArrayList<Cuenta> getAccounts()
 	{
-		return this.lastMSG;
+		return this.accounts;
 	}
-	public void agregarCuenta(Cuenta cuenta)
+	public UserInteraction getInteraction()
 	{
-		if(nroCuenta==0)
-		{
-			this.nroCuenta=1;
-		}
-		else
-		{
-			this.nroCuenta++;
-		}
-		cuentas.put(nroCuenta, cuenta);
+		return this.interaction;
 	}
-	public int getNroCuenta()
-	{
-		return this.nroCuenta;
-	}
-	public Cuenta getCuenta(int n)
-	{
-		return this.cuentas.get(n);
-	}
-	public Mensaje getMensaje()
-	{
-		return this.mensaje;
-	}
-	public void setMensaje(Mensaje mensaje) 
-	{
-		this.mensaje=mensaje;
-	}
-	public void setLastMSG(String lastMSG)
-	{
-		this.lastMSG=lastMSG;
-	}
+	//Setters
 	public void setStatus(String status)
 	{
 		this.status=status;
@@ -83,5 +56,11 @@ public class Usuario {
 	{
 		this.pin=pin;
 	}
+	//Methods
+	public void agregarCuenta(Cuenta account)
+	{
+		accounts.add(account);
+	}
+	
 	
 }

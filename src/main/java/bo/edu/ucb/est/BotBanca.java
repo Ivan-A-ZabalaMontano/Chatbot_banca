@@ -59,7 +59,8 @@ public class BotBanca extends TelegramLongPollingBot{
 	public void sendMessage(SendMessage message, Usuario user,String texto)
 	{
 		 Answer answer= new Answer(user);
-		 Mensaje mensaje= answer.receiveAnswer(texto);
+		 answer.receiveAnswer(texto);
+		 Mensaje mensaje= answer.getMensaje();
 		 int n= mensaje.getKey();
 		 
 		 for(int i=1;i<n;i++)

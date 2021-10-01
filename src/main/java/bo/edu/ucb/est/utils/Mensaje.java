@@ -13,17 +13,14 @@ public class Mensaje {
 	private HashMap<String,String> properties;
 	
 	private int key;
-	private String status;
+
 	public Mensaje()
 	{
 		this.key=1;
 		this.mensajes= new HashMap<Integer, String>();
 		this.properties= new HashMap<String, String>();
 	}
-	public String getStatus()
-	{
-		return this.status;
-	}
+
 	public int getKey()
 	{
 		return this.key;
