@@ -4,19 +4,19 @@ package bo.edu.ucb.est;
 
 import java.util.ArrayList;
 
-import bo.edu.ucb.est.utils.Mensaje;
+import bo.edu.ucb.est.utils.Message;
 
 public class UserInteraction {
 	private String received;
 	private ArrayList<String> send;
-	private Mensaje message;
+	private Message message;
 	
 
 	public UserInteraction()
 	{
 		this.received="";
 		this.send= new ArrayList<String>();
-		this.message= new Mensaje();
+		this.message= new Message();
 	}
 	
 	//Getters
@@ -24,7 +24,7 @@ public class UserInteraction {
 	{
 		return this.received;
 	}
-	public Mensaje getMessage()
+	public Message getMessage()
 	{
 		return this.message;
 	}
@@ -37,7 +37,7 @@ public class UserInteraction {
 	{
 		this.received=lastMSG;
 	}
-	public void setMessage(Mensaje message)
+	public void setMessage(Message message)
 	{
 		this.message=message;
 	}

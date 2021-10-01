@@ -3,41 +3,42 @@ package bo.edu.ucb.est;
 import java.util.Random;
 
 import bo.edu.ucb.est.banca.Cuenta;
-import bo.edu.ucb.est.utils.Mensaje;
+import bo.edu.ucb.est.banca.User;
+import bo.edu.ucb.est.utils.Message;
 
-public class Answer {
+public class BotInteraction {
 	
-	private Mensaje mensaje;
+	private Message message;
 	
-	private Usuario user;
+	private User user;
 	private  UserInteraction interaction;
-	public Answer(Usuario user)
+	public BotInteraction(User user)
 	{
 		this.user=user;
-		mensaje= new Mensaje();
+		message= new Message();
 		this.interaction=user.getInteraction();
 	}
 	
 	public void receiveAnswer(String input)
 	{
-		Mensaje mensaje=interaction.getMessage();
+		Message message=interaction.getMessage();
 		String send=interaction.getReceived();
 		switch(user.getStatus())
 		{
 		case "Nuevo":
-			if(user.getNombre().equals("") && send.equals(""))
+			if(user.getName().equals("") && send.equals(""))
 			{
 				System.out.println("Lugar nombre");
 				defineRegisterName();
 			}
 			else 
 			{
-				if(!send.equals("") && mensaje.validarMensaje(send, input)!=-1 && user.getNombre().equals(""))
+				if(!send.equals("") && message.verifyMessage(send, input)!=-1 && user.getName().equals(""))
 				{
 					System.out.println("Lugar Pin");
-					user.setNombre(input);
+					user.setName(input);
 				}
-				else if(mensaje.validarMensaje(send, input)!=-1)
+				else if(message.verifyMessage(send, input)!=-1)
 				{
 					if(input.length()==4)
 					{
@@ -50,7 +51,7 @@ public class Answer {
 
 		;break;
 		case "Registrado":
-			if(mensaje.validarMensaje(send, input)!=-1 && send.contains("Solo por seguridad"))
+			if(message.verifyMessage(send, input)!=-1 && send.contains("Solo por seguridad"))
 			{
 				if(user.getPin().equals(input))
 				{
@@ -90,8 +91,8 @@ public class Answer {
 			}
 			else if(send.contains("moneda"))
 			{
-				int option=mensaje.validarMensaje(send, input);
-				if(send.contains(input))
+				int option=message.verifyMessage(send, input);
+				if(send.contains(input) &&  message.verifyMessage(send,input)!=-1)
 				{
 					if(option==2) user.getInteraction().addSend("Bolivianos");
 					else if(option==1) user.getInteraction().addSend("Dólares");
@@ -100,14 +101,14 @@ public class Answer {
 				}
 				else
 				{
-					mensaje.agregarMensaje("Opcion incorrecta");
+					this.message.addMessage("Opcion incorrecta");
 					defineSelectCoin();
 				}		
 			}
 			else if(send.contains("tipo"))
 			{
-				int option=mensaje.validarMensaje(send, input);
-				if(send.contains(input))
+				int option=message.verifyMessage(send, input);
+				if(send.contains(input) &&  message.verifyMessage(send,input)!=-1)
 				{
 					if(option==1)user.getInteraction().addSend("Cuenta Corriente");
 					else if(option==2)user.getInteraction().addSend("Caja de Ahorros");
@@ -116,16 +117,16 @@ public class Answer {
 				}
 				else
 				{
-					mensaje.agregarMensaje("Opcion incorrecta");
+					this.message.addMessage("Opcion incorrecta");
 					defineSelectType();
 				}
 			}
 			else if(send.contains("Seleccione una Cuenta"))
 			{
 				System.out.println("Selecciono una cuenta: ");
-				if(send.contains(input) && mensaje.validarMensaje(send, input)!=-1 
-						&& mensaje.validarMensaje(send,input)>0 
-						&& mensaje.validarMensaje(send, input)<=user.getAccounts().size())
+				if(send.contains(input) && message.verifyMessage(send, input)!=-1 
+						&& message.verifyMessage(send,input)>0 
+						&& message.verifyMessage(send, input)<=user.getAccounts().size())
 				{
 					System.out.println("Opcion: "+user.getInteraction().getSend().get(0));
 					user.getInteraction().addSend(input);
@@ -133,14 +134,58 @@ public class Answer {
 					{
 						System.out.println("Ver cuenta");
 						defineShowInfo();
+						user.getInteraction().clearSend();
 					}
 					else if(user.getInteraction().getSend().get(0).equals("2")) defineWithdraw();
 					else if(user.getInteraction().getSend().get(0).equals("3")) defineDeposit();
-					user.getInteraction().clearSend();
+					
 					
 				}else
 				{
 					defineShowAccounts();
+				}
+			}
+			else if(send.contains("monto"))
+			{
+				try
+				{
+					double n=Double.parseDouble(input);
+					
+					int n2= Integer.parseInt(user.getInteraction().getSend().get(1));
+					System.out.println("Valor incial: "+n2);
+					n2-=1;
+					System.out.println("Valor final: "+n2);
+					if(send.contains("retirar"))
+					{
+						if(user.getAccounts().get(n2).retirar(n))
+						{
+							this.message.addMessage("Retiro exitoso");
+						}
+						else
+						{
+							this.message.addMessage("Monto inválido");
+						}
+					}
+					else
+					{
+						if(user.getAccounts().get(n2).depositar(n))
+						{
+							this.message.addMessage("Depósito exitoso");
+						}
+						else
+						{
+							this.message.addMessage("Monto inválido");
+						}
+						
+					}
+					defineMenu();
+					user.getInteraction().clearSend();
+				}catch(Exception e)
+				{
+					System.out.println("El usuario envio un monto incorrecto");
+					this.message.addMessage("Monto inválido");
+					defineMenu();
+					user.getInteraction().clearSend();
 				}
 			}
 			else
@@ -149,41 +194,41 @@ public class Answer {
 			}
 		;break;
 		}
-		user.getInteraction().setReceived(this.mensaje.getMensajes().get(this.mensaje.getKey()-1));
-		user.getInteraction().setMessage(this.mensaje);
-		System.out.println("Nombre: "+user.getNombre());
+		user.getInteraction().setReceived(this.message.getMensajes().get(this.message.getKey()-1));
+		user.getInteraction().setMessage(this.message);
+		System.out.println("Nombre: "+user.getName());
 		System.out.println("Pin: "+user.getPin());
 		System.out.println("Ultimo mensaje recibido: "+interaction.getReceived());
 		System.out.println("Mensaje: "+interaction.getMessage().getProperties());
 	}
-	public Answer getAnswer()
+	public BotInteraction getAnswer()
 	{
 		return this;
 	}
-	public Mensaje getMensaje()
+	public Message getMensaje()
 	{
-		return this.mensaje;
+		return this.message;
 	}
 	public void defineRegisterName()
 	{
-		mensaje.agregarMensaje("Bienvenido al Banco de los Dioses");
-		mensaje.agregarMensaje("He notado que aún no eres cliente, procedamos a registrarte.");
-		mensaje.agregarMensaje("¿Cúal es tu nombre completo?","String");
+		message.addMessage("Bienvenido al Banco de los Dioses");
+		message.addMessage("He notado que aún no eres cliente, procedamos a registrarte.");
+		message.addMessage("¿Cúal es tu nombre completo?","String");
 	}
 	public void defineWithoutAccount()
 	{
-		mensaje.agregarMensaje("Usted no tiene cuentas, cree una primero");
+		message.addMessage("Usted no tiene cuentas, cree una primero");
 		defineMenu();
 	}
 	public void defineRegisterPin()
 	{
 		if(user.getPin().equals(""))
 		{
-			mensaje.agregarMensaje("Por favor elige un PIN de seguridad, este te será requerido cada que ingreses al sistema.","Integer");
+			message.addMessage("Por favor elige un PIN de seguridad, este te será requerido cada que ingreses al sistema.","Integer");
 		}
 		else
 		{
-			mensaje.agregarMensaje("Te hemos registrado correctamente.");
+			message.addMessage("Te hemos registrado correctamente.");
 			user.setStatus("Registrado");
 			defineWelcome();
 		}
@@ -192,13 +237,13 @@ public class Answer {
 	}
 	public void defineWelcome()
 	{
-		mensaje.agregarMensaje("Hola de nuevo "+user.getNombre());
-		mensaje.agregarMensaje("Solo por seguridad ¿Cuál es tu PIN?","Integer");
+		message.addMessage("Hola de nuevo "+user.getName());
+		message.addMessage("Solo por seguridad ¿Cuál es tu PIN?","Integer");
 	}
 	public void defineMenu() 
 	{
-		mensaje.agregarMensaje("Bienvenido.");
-		mensaje.agregarMensaje("Elige una opción: "
+		message.addMessage("Bienvenido.");
+		message.addMessage("Elige una opción: "
 						+ "\n1. Ver Saldo."
 						+ "\n2. Retirar dinero."
 						+ "\n3. Depositar dinero."
@@ -207,13 +252,13 @@ public class Answer {
 	}
 	public void defineSelectCoin()
 	{
-		mensaje.agregarMensaje("Seleccione la moneda: "
+		message.addMessage("Seleccione la moneda: "
 				+ "\n1. Dólares."
 				+ "\n2. Bolivianos","Integer");
 	}
 	public void defineSelectType() 
 	{
-		mensaje.agregarMensaje("Seleccione el tipo de cuenta: "
+		message.addMessage("Seleccione el tipo de cuenta: "
 				+ "\n1. Cuenta Corriente."
 				+ "\n2. Caja de Ahorros","Integer");
 	}
@@ -241,8 +286,8 @@ public class Answer {
 		Random rand= new Random();
 		int rng= rand.nextInt(500);
 		nro+=rng;
-		user.agregarCuenta(new Cuenta(moneda,nro,tipo,0.0));
-		mensaje.agregarMensaje("Se le ha creado una cuenta: "
+		user.addAccount(new Cuenta(moneda,nro,tipo,0.0));
+		message.addMessage("Se le ha creado una cuenta: "
 				+ "\nNro de Cuenta: "+nro
 				+"\nMoneda: "+moneda
 				+ "\nTipo: "+tipo
@@ -261,16 +306,16 @@ public class Answer {
 				+ "\nTipo: "+cuenta.getTipo()
 				+ "\nMoneda: "+cuenta.getMoneda()
 				+ "\nSaldo disponible: "+cuenta.getSaldo();
-		mensaje.agregarMensaje(msg);
+		message.addMessage(msg);
 		defineMenu();
 	}
 	public void defineWithdraw()
 	{
-		
+		message.addMessage("Ingrese el monto a retirar: ","Integer");
 	}
 	public void defineDeposit()
 	{
-		
+		message.addMessage("Ingrese el monto a depositar: ","Integer");
 	}
 	public void defineShowAccounts()
 	{
@@ -281,6 +326,6 @@ public class Answer {
 			msg+="\n";
 			msg+=(i+1)+". "+account.getTipo()+"-"+account.getNroCuenta();
 		}
-		mensaje.agregarMensaje(msg,"Integer");
+		message.addMessage(msg,"Integer");
 	}
 }

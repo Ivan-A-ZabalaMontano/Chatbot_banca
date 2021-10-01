@@ -7,17 +7,17 @@ import java.util.Map;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-public class Mensaje {
+public class Message {
 	
-	private HashMap<Integer,String> mensajes;
+	private HashMap<Integer,String> messages;
 	private HashMap<String,String> properties;
 	
 	private int key;
 
-	public Mensaje()
+	public Message()
 	{
 		this.key=1;
-		this.mensajes= new HashMap<Integer, String>();
+		this.messages= new HashMap<Integer, String>();
 		this.properties= new HashMap<String, String>();
 	}
 
@@ -31,20 +31,20 @@ public class Mensaje {
 		return properties;
 	}
 	public HashMap<Integer, String> getMensajes() {
-		return mensajes;
+		return messages;
 	}
-	public void agregarMensaje(String mensaje)
+	public void addMessage(String mensaje)
 	{
-		mensajes.put(key, mensaje);
+		messages.put(key, mensaje);
 		key++;
 	}
-	public void agregarMensaje(String mensaje, String input)
+	public void addMessage(String mensaje, String input)
 	{
-		mensajes.put(key, mensaje);
+		messages.put(key, mensaje);
 		properties.put(mensaje, input);
 		key++;
 	}
-	public int validarMensaje(String key, String texto)
+	public int verifyMessage(String key, String texto)
 	{
 		String property=properties.get(key);
 		

@@ -1,23 +1,22 @@
-package bo.edu.ucb.est;
+package bo.edu.ucb.est.banca;
 
 import java.util.ArrayList;
 
-import bo.edu.ucb.est.banca.Cuenta;
-import bo.edu.ucb.est.utils.Mensaje;
+import bo.edu.ucb.est.UserInteraction;
 
-public class Usuario {
+public class User {
 	private String status;
-	private String nombre;
+	private String name;
 	private String pin;
 	private ArrayList<Cuenta> accounts;
 
 	private UserInteraction interaction;
 	
 	
-	public Usuario() 
+	public User() 
 	{
 		this.status="Nuevo";
-		this.nombre="";
+		this.name="";
 		this.pin="";
 		this.accounts=new ArrayList<Cuenta>();
 		this.interaction= new UserInteraction();
@@ -27,9 +26,9 @@ public class Usuario {
 	{
 		return this.status;
 	}
-	public String getNombre()
+	public String getName()
 	{
-		return this.nombre;
+		return this.name;
 	}
 	public String getPin()
 	{
@@ -48,16 +47,16 @@ public class Usuario {
 	{
 		this.status=status;
 	}
-	public void setNombre(String nombre)
+	public void setName(String nombre)
 	{
-		this.nombre=nombre;
+		this.name=nombre;
 	}
 	public void setPin(String pin)
 	{
 		this.pin=pin;
 	}
 	//Methods
-	public void agregarCuenta(Cuenta account)
+	public void addAccount(Cuenta account)
 	{
 		accounts.add(account);
 	}

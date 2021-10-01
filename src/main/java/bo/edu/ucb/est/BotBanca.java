@@ -8,19 +8,20 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import bo.edu.ucb.est.utils.Mensaje;
+import bo.edu.ucb.est.banca.User;
+import bo.edu.ucb.est.utils.Message;
 
 public class BotBanca extends TelegramLongPollingBot{
 
 	
-	private HashMap<Long,Usuario> usuarios;
+	private HashMap<Long,User> usuarios;
 
 	
 	public BotBanca()
 	{
-		usuarios= new HashMap<Long,Usuario>();
+		usuarios= new HashMap<Long,User>();
 	}
-	public Usuario verificarUsuario(Long id)
+	public User verificarUsuario(Long id)
 	{
 		if(usuarios.containsKey(id))
 		{
@@ -28,7 +29,7 @@ public class BotBanca extends TelegramLongPollingBot{
 		}
 		else
 		{
-			usuarios.put(id, new Usuario());
+			usuarios.put(id, new User());
 			System.out.println("Usuario agregado");
 		}
 		return usuarios.get(id);
@@ -50,17 +51,17 @@ public class BotBanca extends TelegramLongPollingBot{
             // Obtiene el mensaje del usuario
             String texto=update.getMessage().getText();
        
-            Usuario user=verificarUsuario(userID);
+            User user=verificarUsuario(userID);
             sendMessage(message,user,texto);
             
 		}
 	}
 	
-	public void sendMessage(SendMessage message, Usuario user,String texto)
+	public void sendMessage(SendMessage message, User user,String texto)
 	{
-		 Answer answer= new Answer(user);
+		 BotInteraction answer= new BotInteraction(user);
 		 answer.receiveAnswer(texto);
-		 Mensaje mensaje= answer.getMensaje();
+		 Message mensaje= answer.getMensaje();
 		 int n= mensaje.getKey();
 		 
 		 for(int i=1;i<n;i++)
